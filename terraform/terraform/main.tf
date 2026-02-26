@@ -20,12 +20,13 @@ resource "null_resource" "install_everything" {
   }
 
   # Execute script
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/install_all_packages.sh",
-      "sudo /tmp/install_all_packages.sh"
-    ]
-  }
+ provisioner "remote-exec" {
+  inline = [
+    "echo 'Simulating SAP BI install...'",
+    "cat /tmp/response.ini",
+    "sleep 20"
+  ]
+}
 }
 
 # Create AMI after installation
