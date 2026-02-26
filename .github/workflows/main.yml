@@ -12,12 +12,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # 2️⃣ Debug folder structure (optional)
+      - name: Show Repo Structure
+        run: ls -R
+
+      # 3️⃣ Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      # 4️⃣ Configure AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -25,18 +32,26 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-2
 
+      # 5️⃣ Create SSH private key
       - name: Create SSH Private Key
         run: |
-          mkdir -p terraform
-          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > terraform/my-key.pem
-          chmod 400 terraform/my-key.pem
+          mkdir -p terraform/terraform
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > terraform/terraform/my-key.pem
+          chmod 400 terraform/terraform/my-key.pem
 
+      # 6️⃣ Terraform Init
       - name: Terraform Init
-        working-directory: terraform
+        working-directory: terraform/terraform
         run: terraform init
 
+      # 7️⃣ Terraform Validate
+      - name: Terraform Validate
+        working-directory: terraform/terraform
+        run: terraform validate
+
+      # 8️⃣ Terraform Apply
       - name: Terraform Apply
-        working-directory: terraform
+        working-directory: terraform/terraform
         run: |
           terraform apply -auto-approve \
             -var="aws_region=ap-southeast-2" \
