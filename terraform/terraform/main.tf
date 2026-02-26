@@ -15,7 +15,7 @@ resource "null_resource" "install_everything" {
 
   # Copy SAP response file
   provisioner "file" {
-    source      = "../response.ini"
+    source      = "${path.module}/response.ini"
     destination = "/tmp/response.ini"
   }
 
